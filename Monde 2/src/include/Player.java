@@ -26,9 +26,8 @@ public class Player {
     public Player(String a, int b) {
         nbPlayers++;
         this.name = a;
-        // Niveau 6 : Gestion du nom par défaut "Joueur N"
         if (name == null || name.trim().isEmpty()) {
-            this.name = "Joueur " + nbPlayers;
+            this.name = "Joueur" + nbPlayers;
         }
         this.score = b;
     }
@@ -81,8 +80,7 @@ public class Player {
      */
     public void addPoint(int point){
         this.score += point;
-        // Niveau 2 : Le score ne peut pas être négatif (bien que l'addition ne pose généralement pas ce souci, c'est une sécurité)
-        if(this.score < 0){
+        if(this.score < 0){ // Le score ne peut pas être < 0
             this.score = 0;
         }
     }
@@ -95,8 +93,7 @@ public class Player {
      */
     public void removePoint(int point){
         this.score -= point;
-        // Niveau 2 : Si le joueur perd plus de points qu'il n'en a, son score devient nul
-        if(this.score < 0){
+        if(this.score < 0){  // Le score ne peut pas être < 0
             this.score = 0;
         }
     }
@@ -156,7 +153,7 @@ public class Player {
             System.out.println(j);
         }
         if (getNbPlayers() < 2) {
-            System.out.println("Il y a " + getNbPlayers() + " include");
+            System.out.println("Il y a " + getNbPlayers() + " joueur");
         } else{
             System.out.println("Il y a " + getNbPlayers() + " joueur(s)");
         }

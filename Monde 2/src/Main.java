@@ -1,6 +1,5 @@
 import include.Player;
 import include.Level;
-
 import java.util.Scanner;
 
 public class Main {
@@ -8,60 +7,59 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
 
-        Player[] player = Player.createPlayer(scanner);
-        Player.displayPlayers(player);
-        if (Player.getNbPlayers()>1) {
-            player[0].addPoint(4);
-            player[1].removePoint(5);
-            Player.displayPlayers(player);
-            boolean egalite = player[0].equals(player[1]);
-            System.out.println("Les players 1 et 2 sont-ils égaux ? : " + egalite);
+        // --- PARTIE 1 : JOUEURS ---
+        Player[] players = Player.createPlayer(scanner); // Renommé 'player' en 'players' pour clarté
+        Player.displayPlayers(players);
+
+        if (Player.getNbPlayers() > 1) {
+            players[0].addPoint(4);
+            players[1].removePoint(5);
+            Player.displayPlayers(players);
+            boolean egalite = players[0].equals(players[1]);
+            System.out.println("Les joueurs 1 et 2 sont-ils égaux ? : " + egalite);
         }
 
-        // Partie 2
-
+        // --- PARTIE 2 : NIVEAU (MONDE 2) ---
         System.out.println("\n=== Création du niveau ===\n");
 
-        /*
-        Niveau petitNiveau = new Niveau(10, 10);
-        petitNiveau.addWallOutSide();
-        petitNiveau.addWall(2, 2);
-        petitNiveau.addWall(3, 2);
-        petitNiveau.addWall(4, 2);
-        petitNiveau.displayMap();
-        */
         Level level = new Level(10, 20);
         level.addWallOutSide();
+        // Ajout de quelques murs internes pour tester les collisions
         level.addWall(5, 5);
         level.addWall(5, 6);
         level.addWall(5, 7);
+
         level.displayMap();
+
         if(Player.getNbPlayers() > 0) {
             System.out.println("\n=== Tentative de placement du player ===\n");
+            try {
+                level.placePlayer(players[0], 2, 2);
+                level.displayMap();
 
-            level.placePlayer(player[0], 2, 2);
-            level.displayMap();
+                boolean playing = true;
+                while (playing) {
+                    System.out.print("Déplacement (z/q/s/d) ou 'exit' pour quitter : ");
+                    String input = scanner.next();
+
+                    if (input.equalsIgnoreCase("exit")) {
+                        playing = false;
+                        System.out.println("Fin de la partie.");
+                    } else {
+                        // On délègue la logique de mouvement au niveau
+                        level.movePlayer(input);
+                        level.displayMap();
+                    }
+                }
+
+            } catch (IllegalArgumentException e) {
+                // Capture des erreurs de placement initial (Mur ou hors map)
+                System.out.println("ERREUR CRITIQUE : " + e.getMessage());
+            }
+        } else {
+            System.out.println("Pas de joueur créé, impossible de jouer.");
         }
-        System.out.println("Donner direction");
-        String x = scanner.next();
 
-        switch (x){
-            case "z":
-                level.playerY += 1;
-                break;
-            case "s":
-                level.playerY -= 1;
-                break;
-            case "d":
-                level.playerX += 1;
-                break;
-            case "q":
-                level.playerX -= 1;
-                break;
-
-        }
-        level.placePlayer(player[0]);
-        level.displayMap();
         scanner.close();
     }
 }
