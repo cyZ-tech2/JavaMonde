@@ -8,7 +8,6 @@ public class Level {
     public int playerX;
     public int playerY;
 
-    // Niveau 3 : Enum pour les directions [cite: 200]
     public enum Direction{
         HAUT,
         BAS,
@@ -19,22 +18,21 @@ public class Level {
     public Level(int height, int width) {
         this.height = height;
         this.width = width;
-        this.grid = new char[height][width];
+        this.grid = new char[width][height];
         createLevel();
     }
 
     private void createLevel() {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                grid[i][j] = ' ';
+                grid[j][i] = ' ';
             }
         }
     }
 
     public void addWall(int x, int y) {
-        // Attention : grid[y][x] car y = ligne (hauteur), x = colonne (largeur)
         if (x >= 0 && x < width && y >= 0 && y < height) {
-            grid[y][x] = '#';
+            grid[x][y] = '#';
         } else {
             System.out.println("Coordonnées invalides : " + x + "," + y);
         }
@@ -44,7 +42,7 @@ public class Level {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 if (i == 0 || i == height - 1 || j == 0 || j == width - 1) {
-                    grid[i][j] = '#';
+                    grid[j][i] = '#';
                 }
             }
         }
@@ -57,19 +55,19 @@ public class Level {
         if (x < 0 || x >= width || y < 0 || y >= height) {
             throw new IllegalArgumentException("Erreur : Position (" + x + "," + y + ") hors des limites du niveau.");
         }
-        if (grid[y][x] == '#') {
+        if (grid[x][y] == '#') {
             throw new IllegalArgumentException("Erreur : Impossible de placer le joueur sur un mur en (" + x + "," + y + ").");
         }
 
         // Si le joueur était déjà placé ailleurs, on efface sa trace
         if (this.player != null) {
-            grid[this.playerY][this.playerX] = ' ';
+            grid[this.playerX][this.playerY] = ' ';
         }
 
         this.player = j;
         this.playerX = x;
         this.playerY = y;
-        grid[y][x] = '1'; // Correction indexation
+        grid[x][y] = '1';
     }
 
     /**
@@ -100,7 +98,8 @@ public class Level {
 
         // Vérification des limites et des murs avant de bouger
         if (newX >= 0 && newX < width && newY >= 0 && newY < height) {
-            if (grid[newY][newX] != '#') {
+            // MODIFICATION : Accès grid[newX][newY]
+            if (grid[newX][newY] != '#') {
                 // On utilise placePlayer pour faire le déplacement proprement
                 placePlayer(this.player, newX, newY);
             } else {
@@ -115,7 +114,7 @@ public class Level {
         System.out.println("=== Niveau (" + width + "x" + height + ") ===");
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                System.out.print(grid[i][j]);
+                System.out.print(grid[j][i]);
             }
             System.out.println();
         }
