@@ -46,7 +46,7 @@ public class Map {
         }
     }
 
-    public void loadLevelFromFile() throws IOException {
+    public void loadLevelFromFile(Level level) throws IOException {
         Path path = Paths.get(this.levelPath);
         List<String> lines = Files.readAllLines(path);
 
@@ -58,7 +58,9 @@ public class Map {
             if (line.length() > w) w = line.length();
         }
 
-        Map map = new Map(w, h);
+        this.width = w;
+        this.height = h;
+        this.grid = new char[w][h];
         this.credit = 0;
         boolean playerFound = false;
 
@@ -71,26 +73,42 @@ public class Map {
                 }
 
                 if (c == '1') {
-                    this.map.setCell(x, y, ' ');
-                    placePlayer(this.player, x, y);
-                    this.map.firstX = x;
-                    this.map.firstY = y;
+                    this.setCell(x, y, ' ');
+                    level.placePlayer(level.getPlayer(), x, y);
+                    level.getPlayer().firstX = x;
+                    level.getPlayer().firstY = y;
                     playerFound = true;
                 } else {
-                    this.map.setCell(x, y, c);
+                    this.setCell(x, y, c);
                     if (c == '.') {
-                        this.map.credit++;
+                        this.credit++;
                     }
                 }
             }
         }
 
         if (!playerFound) {
-            spawnPlayerRandomly();
+            spawnPlayerRandomly(level);
         }
 
-        if (this.map.credit == 0) {
+        if (this.credit == 0) {
             System.out.println("ATTENTION : Aucun crédit (.) trouvé dans le fichier !");
+        }
+    }
+
+    private void spawnPlayerRandomly(Level level) {
+        Random r = new Random();
+        while (true) {
+            int rx = r.nextInt(this.width);
+            int ry = r.nextInt(this.height);
+            char c = getCell(rx, ry);
+
+            if (c != '#' && c != '*' && c != '.') {
+                level.placePlayer(level.getPlayer(), rx, ry);
+                level.getPlayer().firstX = rx;
+                level.getPlayer().firstY = ry;
+                break;
+            }
         }
     }
 
@@ -98,20 +116,6 @@ public class Map {
         this.levelPath = levelPath;
     }
 
-    private void spawnPlayerRandomly() {
-        Random r = new Random();
-        while (true) {
-            int rx = r.nextInt(map.getWidth());
-            int ry = r.nextInt(map.getHeight());
-            char c = map.getCell(rx, ry);
-            if (c != '#' && c != '*' && c != '.') {
-                placePlayer(this.player, rx, ry);
-                this.map.firstX = rx;
-                this.map.firstY = ry;
-                break;
-            }
-        }
-    }
 
 
     public char getCell(int x, int y) {

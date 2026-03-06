@@ -39,6 +39,9 @@ public class Level {
             System.out.println("Erreur : Pas de joueurs");
             return;
         }
+
+        // CORRECTION 1 : Instancier la map avant de l'utiliser
+        this.map = new Map(0, 0);
         this.map.setLevelPath(path);
 
         choosePlayer(scanner, p);
@@ -46,7 +49,8 @@ public class Level {
         boolean retry = true;
         while (retry) {
             try {
-                map.loadLevelFromFile();
+                // CORRECTION 2 : Passer l'instance courante (Level) à la map
+                map.loadLevelFromFile(this);
                 resetPlayerState();
                 retry = play(scanner);
             } catch (IOException e) {
