@@ -9,6 +9,10 @@ public class Player {
     private int score = 0;
     public static int nbPlayers = 0;
     private int hp = 5;
+    public int playerX;
+    public int playerY;
+    public int firstX;
+    public int firstY;
 
     /**
      * Constructeur par défaut.
